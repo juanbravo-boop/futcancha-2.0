@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FutCancha | Reserva de canchas sintéticas por Telegram</title>
+<meta name="description" content="Solicita horas de cancha sintética de fútbol 5, 7 u 11 en Popayán y el Cauca conversando con un asistente en Telegram.">
+<!-- Icono de la pestaña: archivo local de la carpeta img. -->
+<link rel="icon" href="img/favico.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cesped-950:#0A1F13; --cesped-900:#0E2A1A; --cesped-700:#1B6B35; --cesped-500:#1F7A3F; --cesped-400:#1A6E38;
+  --tiza:#F4F8F2; --papel:#F3F5EE; --tinta:#12261A; --apagado:#4B5C51; --linea:#D6DDD2;
+  --amarillo:#F5C400; --telegram:#0088CC; --telegram-hover:#0077B3;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;color:var(--tinta);background:var(--papel);line-height:1.55}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,.display{font-family:'Barlow Condensed','Arial Narrow',Arial,sans-serif;font-weight:800;line-height:1.02;letter-spacing:.2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+:focus-visible{outline:3px solid var(--amarillo);outline-offset:3px}
+
+/* ---- barra académica ---- */
+.topbar{background:var(--cesped-950);color:#CFE3D5;font-size:13px;font-weight:600}
+.topbar .wrap{display:flex;flex-wrap:wrap;gap:6px 24px;justify-content:space-between;padding-top:10px;padding-bottom:10px}
+
+/* ---- navegación ---- */
+.nav{position:sticky;top:0;z-index:40;background:rgba(14,42,26,.96);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08);color:var(--tiza)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:12px;padding-bottom:12px}
+.marca{display:flex;align-items:center;gap:12px}
+.marca img{width:44px;height:44px}
+.marca strong{display:block;font-family:'Barlow Condensed',Arial,sans-serif;font-size:26px;font-weight:800;line-height:1}
+.marca small{display:block;font-size:12px;color:#A9C4B1}
+.nav-links{display:flex;align-items:center;gap:26px;font-size:14px;font-weight:600}
+.nav-links a:hover{color:var(--amarillo)}
+@media(max-width:760px){.nav-links a.txt{display:none}.nav-links{gap:10px}.nav .btn-sm{padding:10px 14px;font-size:13px}.marca small{display:none}}
+
+/* ---- botones ---- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-weight:700;font-size:15px;border-radius:999px;padding:14px 26px;border:2px solid transparent;transition:background .2s,transform .2s,border-color .2s;cursor:pointer;min-height:48px}
+.btn svg{width:20px;height:20px;fill:currentColor;flex:none}
+.btn-tg{background:var(--telegram);color:#fff}
+.btn-tg:hover{background:var(--telegram-hover);transform:translateY(-2px)}
+.btn-ghost{border-color:rgba(255,255,255,.55);color:#fff}
+.btn-ghost:hover{border-color:var(--amarillo);color:var(--amarillo)}
+.btn-sm{padding:10px 20px;font-size:14px;min-height:44px;white-space:nowrap}
+
+/* ---- portada ---- */
+.hero{position:relative;overflow:hidden;color:var(--tiza);
+  background:repeating-linear-gradient(90deg,var(--cesped-500) 0,var(--cesped-500) 70px,var(--cesped-400) 70px,var(--cesped-400) 140px)}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,31,19,.30) 0%,rgba(10,31,19,.78) 100%)}
+.hero .lineas{position:absolute;inset:0;pointer-events:none;opacity:.16}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding-top:72px;padding-bottom:84px}
+.insignias{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+.insignia{font-size:13px;font-weight:700;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);padding:6px 14px;border-radius:999px}
+.hero h1{font-size:clamp(44px,6.4vw,78px);margin-bottom:20px}
+.hero h1 span{display:block;color:var(--amarillo)}
+.hero .lead{font-size:18px;color:#E3F0E7;max-width:540px;margin-bottom:30px}
+.hero-btns{display:flex;flex-wrap:wrap;gap:14px}
+.hero .bot{margin-top:22px;font-size:14px;color:#BFD6C6}
+
+/* ---- ejemplo de chat ---- */
+.chat{background:#fff;color:var(--tinta);border-radius:18px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.35);max-width:440px;margin-left:auto;width:100%}
+.chat-head{display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--telegram);color:#fff}
+.chat-head img{width:38px;height:38px;border-radius:50%;background:#fff}
+.chat-head strong{display:block;font-size:15px;line-height:1.2}
+.chat-head small{font-size:12px;opacity:.85}
+.chat-body{padding:16px;display:flex;flex-direction:column;gap:10px;background:#E8EFE6}
+.msg{max-width:88%;padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.45}
+.msg.u{align-self:flex-end;background:#D4F0C0;border-bottom-right-radius:4px}
+.msg.b{align-self:flex-start;background:#fff;border-bottom-left-radius:4px}
+.msg b{font-weight:700}
+.chat-pie{padding:10px 18px;font-size:12px;color:var(--apagado);background:#fff;border-top:1px solid var(--linea)}
+
+/* ---- canchas ---- */
+.seccion{padding:84px 0}
+.etiqueta{font-weight:700;font-size:14px;color:var(--cesped-700);margin-bottom:8px}
+.seccion h2{font-size:clamp(34px,4.6vw,54px);margin-bottom:12px}
+.seccion .intro{color:var(--apagado);max-width:640px;margin-bottom:44px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.card{background:#fff;border:1px solid var(--linea);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:transform .25s,box-shadow .25s}
+.card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(14,42,26,.16)}
+.card img{width:100%;height:auto;aspect-ratio:8/5;object-fit:cover}
+.card-body{padding:22px 24px 26px;display:flex;flex-direction:column;flex:1}
+.codigo{align-self:flex-start;background:var(--cesped-700);color:#fff;font-weight:800;font-size:13px;letter-spacing:.4px;padding:4px 12px;border-radius:999px;margin-bottom:14px}
+.card h3{font-size:34px;margin-bottom:10px}
+.card p{color:var(--apagado);flex:1;margin-bottom:18px}
+.precio{display:flex;align-items:baseline;gap:8px;margin-bottom:18px}
+.precio strong{font-family:'Barlow Condensed',Arial,sans-serif;font-size:44px;font-weight:800;color:var(--cesped-700);line-height:1}
+.precio span{color:var(--apagado);font-size:14px;font-weight:600}
+.card .btn{width:100%}
+
+/* ---- cómo funciona ---- */
+.dark{background:var(--cesped-900);color:var(--tiza)}
+.dark .etiqueta{color:var(--amarillo)}
+.dark .intro{color:#B7CDBD}
+.flujo{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin-bottom:42px}
+.flujo .nodo{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);padding:10px 18px;border-radius:12px;font-weight:700;font-size:15px}
+.flujo .flecha{color:var(--amarillo);font-weight:800}
+.pasos{list-style:none;counter-reset:paso;display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.pasos li{counter-increment:paso;position:relative;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:20px 22px 20px 68px}
+.pasos li::before{content:counter(paso);position:absolute;left:20px;top:18px;width:34px;height:34px;border-radius:50%;background:var(--amarillo);color:var(--cesped-950);font-weight:800;display:grid;place-items:center}
+.pasos strong{display:block;margin-bottom:4px}
+.pasos p{color:#C8DBCE;font-size:14.5px}
+code{font-family:Consolas,'Courier New',monospace;background:#06130C;color:#9BE3B0;padding:2px 8px;border-radius:6px;font-size:13px;word-break:break-all}
+.aviso{margin-top:28px;font-size:14px;color:#B7CDBD}
+
+/* ---- NUEVO CORTE 03: sección de validación ---- */
+.evaluacion-mvp{max-width:900px;margin:0 auto;padding:36px 28px;border:2px solid var(--cesped-700);border-radius:18px;background:#fff;text-align:center;color:var(--tinta)}
+.evaluacion-mvp h2{font-size:clamp(30px,4vw,44px);margin-bottom:10px}
+.evaluacion-mvp p{color:var(--apagado);max-width:620px;margin:0 auto 18px}
+.evaluacion-mvp a.btn{background:var(--cesped-700);color:#fff}
+.evaluacion-mvp a.btn:hover{background:var(--cesped-900);transform:translateY(-2px)}
+.evaluacion-mvp small{display:block;margin-top:14px;color:var(--apagado);font-size:13px}
+
+/* ---- pie ---- */
+footer{background:var(--cesped-950);color:#A9C4B1;text-align:center;padding:44px 0;font-size:14px}
+footer strong{color:#fff}
+footer .fase{color:var(--amarillo);margin-top:10px;font-weight:700}
+
+/* ---- responsive ---- */
+@media(max-width:980px){
+  .hero .wrap{grid-template-columns:1fr;padding-top:52px;padding-bottom:60px}
+  .chat{margin-left:0;max-width:520px}
+  .cards{grid-template-columns:1fr;max-width:520px}
+  .pasos{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<!-- =========================================================
+     BARRA ACADÉMICA
+========================================================== -->
+<div class="topbar">
+  <div class="wrap">
+    <span>Unicomfacauca · Electiva Administrativa · Lean Startup MVP</span>
+    <span>Asistente FutCancha · @FutCancha_Juan_bot</span>
+  </div>
+</div>
+
+<!-- =========================================================
+     NAVEGACIÓN
+========================================================== -->
+<header class="nav">
+  <div class="wrap">
+    <a class="marca" href="#inicio" aria-label="FutCancha, inicio">
+      <img src="img/logo-futcancha.svg" alt="Logo de FutCancha: balón sobre círculo verde">
+      <span><strong>FutCancha</strong><small>Reserva de canchas sintéticas</small></span>
+    </a>
+    <nav class="nav-links" aria-label="Principal">
+      <a class="txt" href="#canchas">Canchas</a>
+      <a class="txt" href="#como-funciona">¿Cómo funciona?</a>
+      <a class="txt" href="#evaluanos">Evalúanos</a>
+      <!-- Botón general del asistente: abre el bot sin seleccionar cancha -->
+      <a class="btn btn-tg btn-sm" href="https://t.me/FutCancha_Juan_bot?start=inicio" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.4 3.6 2.9 10.7c-1 .4-1 1.2-.2 1.5l4.6 1.4 1.8 5.6c.2.6.6.7 1 .4l2.6-2.1 4.8 3.5c.9.5 1.5.2 1.7-.8L22.8 5c.3-1.2-.4-1.8-1.4-1.4ZM8.7 13.4l9.9-6.2c.5-.3.9-.1.5.2l-8.1 7.3-.3 3.5z"/></svg>
+        Bot Telegram
+      </a>
+    </nav>
+  </div>
+</header>
+
+<!-- =========================================================
+     PORTADA
+========================================================== -->
+<section class="hero" id="inicio">
+  <svg class="lineas" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g fill="none" stroke="#F4F8F2" stroke-width="5">
+      <circle cx="600" cy="300" r="150"/><line x1="600" y1="0" x2="600" y2="600"/>
+      <rect x="-5" y="170" width="170" height="260"/><rect x="1035" y="170" width="170" height="260"/>
+    </g>
+  </svg>
+  <div class="wrap">
+    <div>
+      <div class="insignias">
+        <span class="insignia">✨ IA: Groq con Gemini de respaldo</span>
+        <span class="insignia">⚡ Atención conversacional</span>
+      </div>
+      <h1>Reserva tu cancha en segundos.<span>Juega sin complicaciones.</span></h1>
+      <p class="lead">Solicita horas de cancha sintética de fútbol 5, 7 u 11 en Popayán y el Cauca. Elige una cancha, conversa con nuestro asistente inteligente en Telegram y deja tu solicitud registrada con un número de pedido.</p>
+      <div class="hero-btns">
+        <a class="btn btn-tg" href="https://t.me/FutCancha_Juan_bot?start=inicio" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.4 3.6 2.9 10.7c-1 .4-1 1.2-.2 1.5l4.6 1.4 1.8 5.6c.2.6.6.7 1 .4l2.6-2.1 4.8 3.5c.9.5 1.5.2 1.7-.8L22.8 5c.3-1.2-.4-1.8-1.4-1.4ZM8.7 13.4l9.9-6.2c.5-.3.9-.1.5.2l-8.1 7.3-.3 3.5z"/></svg>
+          Hablar con el Asistente FutCancha
+        </a>
+        <!-- Seguimiento: la referencia mis_pedidos no es una cancha del catálogo -->
+        <a class="btn btn-ghost" href="https://t.me/FutCancha_Juan_bot?start=mis_pedidos" target="_blank" rel="noopener noreferrer">Mis pedidos</a>
+      </div>
+      <p class="bot">🤖 @FutCancha_Juan_bot</p>
+    </div>
+
+    <!-- Ejemplo del recorrido (resumen de los mensajes reales de pizza.py) -->
+    <aside class="chat" aria-label="Ejemplo de conversación con el asistente">
+      <div class="chat-head">
+        <img src="img/logo-futcancha.svg" alt="">
+        <div><strong>Asistente FutCancha</strong><small>bot · responde con Gemini</small></div>
+      </div>
+      <div class="chat-body">
+        <div class="msg u">/start CAN-002</div>
+        <div class="msg b">⚽ Has solicitado información sobre la cancha <b>CAN-002 — Cancha Fútbol 7</b>.<br>💰 Precio por hora: <b>$90.000</b></div>
+        <div class="msg u">/comprar</div>
+        <div class="msg b">¿Cuántas horas de cancha desea? Escriba un número de 1 a 999.</div>
+        <div class="msg u">2</div>
+        <div class="msg b">✅ Pedido <b>PED-0001</b> registrado.<br>Total: <b>$180.000</b><br>📌 Estado: ⏳ PENDIENTE</div>
+      </div>
+      <div class="chat-pie">Ejemplo del recorrido: de la tarjeta de la cancha al pedido guardado.</div>
+    </aside>
+  </div>
+</section>
+
+<!-- =========================================================
+     CANCHAS (3 PRODUCTOS — mismo código y precio que productos.py)
+========================================================== -->
+<section class="seccion" id="canchas">
+  <div class="wrap">
+    <div class="etiqueta">Nuestro catálogo</div>
+    <h2>Elige tu cancha</h2>
+    <p class="intro">Cada cancha tiene una referencia única. Esa referencia viaja a Telegram para iniciar una consulta sobre la cancha que elegiste. Los precios son por hora de alquiler.</p>
+
+    <div class="cards">
+
+      <!-- ===== CAN-001 ===== -->
+      <article class="card">
+        <img src="img/cancha-futbol5.svg" alt="Cancha de fútbol 5 vista desde arriba, con cinco jugadores por equipo" width="800" height="500">
+        <div class="card-body">
+          <span class="codigo">CAN-001</span>
+          <h3>Cancha Fútbol 5</h3>
+          <p>Cancha de césped sintético para fútbol 5, pensada para grupos de hasta 10 jugadores.</p>
+          <div class="precio"><strong>$60.000</strong><span>por hora</span></div>
+          <!-- ENLACE DIRECTO: Telegram recibe /start CAN-001 -->
+          <a class="btn btn-tg" href="https://t.me/FutCancha_Juan_bot?start=CAN-001" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.4 3.6 2.9 10.7c-1 .4-1 1.2-.2 1.5l4.6 1.4 1.8 5.6c.2.6.6.7 1 .4l2.6-2.1 4.8 3.5c.9.5 1.5.2 1.7-.8L22.8 5c.3-1.2-.4-1.8-1.4-1.4ZM8.7 13.4l9.9-6.2c.5-.3.9-.1.5.2l-8.1 7.3-.3 3.5z"/></svg>
+            Consultar por Telegram
+          </a>
+        </div>
+      </article>
+
+      <!-- ===== CAN-002 ===== -->
+      <article class="card">
+        <img src="img/cancha-futbol7.svg" alt="Cancha de fútbol 7 vista desde arriba, con siete jugadores por equipo" width="800" height="500">
+        <div class="card-body">
+          <span class="codigo">CAN-002</span>
+          <h3>Cancha Fútbol 7</h3>
+          <p>Cancha de césped sintético para fútbol 7, pensada para grupos de hasta 14 jugadores.</p>
+          <div class="precio"><strong>$90.000</strong><span>por hora</span></div>
+          <!-- ENLACE DIRECTO: Telegram recibe /start CAN-002 -->
+          <a class="btn btn-tg" href="https://t.me/FutCancha_Juan_bot?start=CAN-002" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.4 3.6 2.9 10.7c-1 .4-1 1.2-.2 1.5l4.6 1.4 1.8 5.6c.2.6.6.7 1 .4l2.6-2.1 4.8 3.5c.9.5 1.5.2 1.7-.8L22.8 5c.3-1.2-.4-1.8-1.4-1.4ZM8.7 13.4l9.9-6.2c.5-.3.9-.1.5.2l-8.1 7.3-.3 3.5z"/></svg>
+            Consultar por Telegram
+          </a>
+        </div>
+      </article>
+
+      <!-- ===== CAN-003 ===== -->
+      <article class="card">
+        <img src="img/cancha-futbol11.svg" alt="Cancha de fútbol 11 vista desde arriba, con once jugadores por equipo" width="800" height="500">
+        <div class="card-body">
+          <span class="codigo">CAN-003</span>
+          <h3>Cancha Fútbol 11</h3>
+          <p>Cancha de césped sintético para fútbol 11, pensada para partidos de hasta 22 jugadores.</p>
+          <div class="precio"><strong>$150.000</strong><span>por hora</span></div>
+          <!-- ENLACE DIRECTO: Telegram recibe /start CAN-003 -->
+          <a class="btn btn-tg" href="https://t.me/FutCancha_Juan_bot?start=CAN-003" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.4 3.6 2.9 10.7c-1 .4-1 1.2-.2 1.5l4.6 1.4 1.8 5.6c.2.6.6.7 1 .4l2.6-2.1 4.8 3.5c.9.5 1.5.2 1.7-.8L22.8 5c.3-1.2-.4-1.8-1.4-1.4ZM8.7 13.4l9.9-6.2c.5-.3.9-.1.5.2l-8.1 7.3-.3 3.5z"/></svg>
+            Consultar por Telegram
+          </a>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     ¿CÓMO FUNCIONA?
+========================================================== -->
+<section class="seccion dark" id="como-funciona">
+  <div class="wrap">
+    <div class="etiqueta">Arquitectura del MVP</div>
+    <h2>¿Cómo funciona?</h2>
+    <p class="intro">La referencia de la cancha conecta la Landing con Telegram, Python y Gemini. Ejemplo con la Cancha Fútbol 7 (CAN-002).</p>
+
+    <div class="flujo" aria-label="Flujo del sistema">
+      <span class="nodo">🌐 Landing</span><span class="flecha" aria-hidden="true">→</span>
+      <span class="nodo">✈️ Telegram</span><span class="flecha" aria-hidden="true">→</span>
+      <span class="nodo">🐍 pizza.py</span><span class="flecha" aria-hidden="true">→</span>
+      <span class="nodo">📚 productos.py</span><span class="flecha" aria-hidden="true">→</span>
+      <span class="nodo">🤖 Groq / Gemini</span><span class="flecha" aria-hidden="true">→</span>
+      <span class="nodo">🗄️ SQLite</span>
+    </div>
+
+    <ol class="pasos">
+      <li><strong>El usuario pulsa el botón de CAN-002</strong><p>La Landing abre <code>https://t.me/FutCancha_Juan_bot?start=CAN-002</code></p></li>
+      <li><strong>Telegram entrega la referencia</strong><p>El bot recibe <code>/start CAN-002</code> y pizza.py busca esa cancha en productos.py.</p></li>
+      <li><strong>El asistente responde con el catálogo</strong><p>La IA (Groq, con Gemini de respaldo) contesta usando solo los datos de la cancha; no inventa precios ni horarios.</p></li>
+      <li><strong>El usuario escribe /comprar y una cantidad</strong><p>Con <code>2</code> horas, Python calcula 2 × $90.000 = $180.000.</p></li>
+      <li><strong>Python guarda el pedido</strong><p>SQLite asigna el consecutivo (PED-0001 o el siguiente) con estado PENDIENTE.</p></li>
+      <li><strong>El administrador decide</strong><p>En su panel local filtra por fecha y estado, y elige: aprobar, no aprobar (con motivo) o cancelar. Queda en el historial.</p></li>
+      <li><strong>El cliente recibe la respuesta</strong><p>Telegram le avisa la decisión y puede revisarla con <code>/mis_pedidos</code>, con su motivo si lo hay.</p></li>
+      <li><strong>El cliente puede cancelar</strong><p>Mientras esté PENDIENTE: <code>Cancelar pedido</code>, escribe PED-0001 y confirma Sí o No.</p></li>
+    </ol>
+    <p class="aviso">Estados: PENDIENTE, APROBADO, NO APROBADO (rechazado, con motivo) y CANCELADO; los tres últimos no se revierten. APROBADO significa pedido aceptado por el administrador; en esta etapa del MVP no se verifican ni se cobran pagos.</p>
+  </div>
+</section>
+
+<!-- =========================================================
+     NUEVO CORTE 03: EVALUACIÓN DEL USUARIO (Google Forms)
+     ADAPTAR: reemplace URL_FORMULARIO por el enlace público del formulario.
+========================================================== -->
+<section class="seccion" id="evaluanos">
+  <div class="wrap">
+    <div class="evaluacion-mvp" aria-labelledby="titulo-evaluacion">
+      <h2 id="titulo-evaluacion">Evalúa tu experiencia</h2>
+      <p>Tu opinión nos ayuda a mejorar FutCancha. Prueba la página, solicita horas de cancha por Telegram y cuéntanos qué tal te fue. Esta es una prueba académica: no hay compra ni pago real.</p>
+      <a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLSdFWZYa4_pSJ9hmryTUUpZkGjxkT0qhiN-wQMu9FGWTCWeT9Q/viewform" target="_blank" rel="noopener noreferrer">Responder evaluación</a>
+      <small>Dura 2 minutos · Es anónima: solo te pedimos un código como U001.</small>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     PIE ACADÉMICO
+========================================================== -->
+<footer>
+  <div class="wrap">
+    <p><strong>Corporación Universitaria Comfacauca - Unicomfacauca</strong></p>
+    <p>Electiva Administrativa</p>
+    <p>Docente: Mag. Julio Ricardo Martínez Montezuma</p>
+    <p class="fase">Lean Startup · Fase CONSTRUIR · FutCancha MVP</p>
+  </div>
+</footer>
+
+</body>
+</html>
